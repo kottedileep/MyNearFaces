@@ -1,0 +1,29 @@
+schema images {
+    document images {
+
+        field human_id type int {
+            indexing: summary | attribute
+            attribute: fast-search
+        }
+        field image_vector type tensor<float>(x[256]) {
+         indexing: attribute | index
+         attribute {
+         distance-metric: angular 
+         }
+         index {
+            hnsw {
+               max-links-per-node: 16
+               neighbors-to-explore-at-insert: 200
+        }
+  }
+}
+    }
+    rank-profile image_similarity inherits default {
+        num-threads-per-search: 1
+        first-phase {
+            expression: closeness(field, image_vector)
+        }
+        match-features: closeness(field,image_vector) attribute(human_id)
+    }
+
+}

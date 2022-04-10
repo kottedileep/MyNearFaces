@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Copyright Yahoo. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root. -->
+
+<services version="1.0">
+
+  <container id='default' version='1.0'>
+    <document-api/>
+    <document-processing>
+      <chain id="chain-processing" inherits="indexing">
+        <documentprocessor id="com.kloudspot.image.ImageDocumentProcessor" bundle="imagesimilarity"/>
+      </chain>
+    </document-processing>
+    <search> 
+      <chain id='mychain' inherits='vespa'>
+        <searcher id='com.kloudspot.image.ImageProfileSearcher' bundle='imagesimilarity'/>
+      </chain>
+    </search>
+    <nodes>
+      <node hostalias='node1'></node>
+    </nodes>
+  </container>
+
+  <content id='image' version='1.0'>
+    <redundancy>1</redundancy>
+    <documents>
+      <document type='images' mode="index"/>
+      <document-processing cluster="default" chain="chain-processing" />
+    </documents>
+    <nodes>
+      <node hostalias="node1" distribution-key="0" />
+    </nodes>
+  </content>
+
+</services>
